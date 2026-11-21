@@ -1,0 +1,20 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Each user can only read and write their own notes and decks.
+    match /users/{uid}/{collection}/{documentId} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+
+      allow create: if request.auth != null
+                    && request.auth.uid == uid
+                    && request.resource.data.keys().hasAll(['title', 'updatedAt']);
+
+      allow update: if request.auth != null
+                    && request.auth.uid == uid
+                    && request.resource.data.uid == uid;
+
+      allow delete: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}

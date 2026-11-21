@@ -1,0 +1,168 @@
+:root {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #e2e8f0;
+  background: #0f172a;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.header p {
+  margin: 4px 0 0;
+  color: #94a3b8;
+}
+
+.auth {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.panel {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.panel h2 {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+}
+
+.badges,
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+button {
+  background: #0284c7;
+  color: white;
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font: inherit;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: #0369a1;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+textarea {
+  width: 100%;
+  background: #0f172a;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 12px;
+  font: inherit;
+  resize: vertical;
+}
+
+.pill {
+  display: inline-block;
+  background: #334155;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+}
+
+.pill.good {
+  background: #166534;
+}
+
+.pill.bad {
+  background: #991b1b;
+}
+
+.pill.cloud {
+  background: #1e40af;
+}
+
+.muted {
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+.error {
+  color: #fca5a5;
+}
+
+.cards {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  margin-bottom: 12px;
+}
+
+.card {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.card p {
+  margin: 8px 0;
+}
+
+.markdown {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 12px 20px;
+  margin-bottom: 12px;
+}
+
+.markdown h1,
+.markdown h2 {
+  color: #7dd3fc;
+}
+
+.markdown table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.markdown th,
+.markdown td {
+  border: 1px solid #334155;
+  padding: 6px;
+  text-align: left;
+}

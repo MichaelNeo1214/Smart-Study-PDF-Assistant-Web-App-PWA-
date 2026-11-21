@@ -1,0 +1,18 @@
+{
+  "name": "Smart Study PDF Assistant",
+  "short_name": "Smart Study",
+  "description": "Turn PDF notes into flashcards and exam guides with hybrid on-device and cloud AI.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
