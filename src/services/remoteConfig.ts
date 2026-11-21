@@ -1,5 +1,5 @@
 import { fetchAndActivate, getRemoteConfig, getValue } from "firebase/remote-config";
-import { app } from "../lib/firebase";
+import { app, firebaseConfigured } from "../lib/firebase";
 
 export type ConfigKey =
   | "ai_mode"
@@ -21,6 +21,10 @@ remoteConfig.defaultConfig = {
 };
 
 export async function initializeRemoteConfig(): Promise<void> {
+  // Without Firebase credentials the SDK would retry installation requests and
+  // pollute the console. The local defaults above are already the right values.
+  if (!firebaseConfigured) return;
+
   try {
     await fetchAndActivate(remoteConfig);
   } catch (error) {

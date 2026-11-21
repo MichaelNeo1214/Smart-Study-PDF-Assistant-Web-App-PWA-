@@ -42,6 +42,9 @@ export async function saveDeck(deck: StudyDeck): Promise<void> {
     title: deck.title,
     source: deck.source,
     cards: deck.cards,
+    noteId: deck.noteId ?? null,
+    inferenceSource: deck.inferenceSource ?? null,
+    model: deck.model ?? null,
     updatedAt: serverTimestamp(),
   };
 
@@ -70,6 +73,14 @@ export async function loadDeck(deckId: string): Promise<StudyDeck | null> {
     cards: Array.isArray(data.cards) ? (data.cards as Flashcard[]) : [],
     createdAt: millis(data.createdAt),
     updatedAt: millis(data.updatedAt),
+    noteId: typeof data.noteId === "string" ? data.noteId : undefined,
+    inferenceSource:
+      data.inferenceSource === "ON_DEVICE" ||
+      data.inferenceSource === "IN_CLOUD" ||
+      data.inferenceSource === "UNKNOWN"
+        ? data.inferenceSource
+        : undefined,
+    model: typeof data.model === "string" ? data.model : undefined,
   };
 }
 
@@ -88,6 +99,14 @@ export async function loadDecks(): Promise<StudyDeck[]> {
       cards: Array.isArray(data.cards) ? (data.cards as Flashcard[]) : [],
       createdAt: millis(data.createdAt),
       updatedAt: millis(data.updatedAt),
+      noteId: typeof data.noteId === "string" ? data.noteId : undefined,
+      inferenceSource:
+        data.inferenceSource === "ON_DEVICE" ||
+        data.inferenceSource === "IN_CLOUD" ||
+        data.inferenceSource === "UNKNOWN"
+          ? data.inferenceSource
+          : undefined,
+      model: typeof data.model === "string" ? data.model : undefined,
     };
   });
 }
@@ -105,6 +124,9 @@ export async function saveNote(note: StudyNote): Promise<void> {
     uid: user.uid,
     title: note.title,
     content: note.content,
+    source: note.source ?? null,
+    pageCount: note.pageCount ?? null,
+    isSample: Boolean(note.isSample),
     updatedAt: serverTimestamp(),
   };
 
@@ -133,8 +155,16 @@ export async function loadNotes(): Promise<StudyNote[]> {
       content: String(data.content ?? ""),
       createdAt: millis(data.createdAt),
       updatedAt: millis(data.updatedAt),
+      source: typeof data.source === "string" ? data.source : undefined,
+      pageCount: typeof data.pageCount === "number" ? data.pageCount : undefined,
+      isSample: data.isSample === true,
     };
   });
+}
+
+export async function deleteNote(noteId: string): Promise<void> {
+  const user = currentUser();
+  await deleteDoc(noteRef(user.uid, noteId));
 }
 
 /** Reports when offline writes have been acknowledged by Firestore. */

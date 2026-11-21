@@ -43,3 +43,35 @@ export function buildExamGuidePrompt(text: string): string {
     text,
   ].join("\n");
 }
+
+export function buildExplainPrompt(text: string): string {
+  return [
+    "You are a patient tutor. Explain the selected passage in plain English for a smart first-year student.",
+    "Rules:",
+    "- Lead with a one-sentence intuition.",
+    "- Use a concrete analogy where it helps.",
+    "- Define every technical term you introduce.",
+    "- Finish with a short '## Check yourself' section containing 2 questions and answers.",
+    "- Return Markdown only, with no code fences around the whole answer, and stay under 260 words.",
+    "- Do not invent facts that are not supported by the passage.",
+    "",
+    "SELECTED PASSAGE:",
+    text,
+  ].join("\n");
+}
+
+export function buildSummaryPrompt(text: string): string {
+  return [
+    "You are an expert note-taker. Summarise the selected passage for exam revision.",
+    "Rules:",
+    "- Start with a one-sentence thesis.",
+    "- Then give 5 to 8 concise bullet points.",
+    "- Bold the key terms in each bullet.",
+    "- End with a '## Exam takeaway' paragraph.",
+    "- Return Markdown only, with no code fences around the whole answer.",
+    "- Use only facts from the passage; do not add outside material.",
+    "",
+    "SELECTED PASSAGE:",
+    text,
+  ].join("\n");
+}

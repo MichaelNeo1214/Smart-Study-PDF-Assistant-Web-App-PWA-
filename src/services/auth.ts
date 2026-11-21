@@ -4,6 +4,7 @@ import {
   onAuthStateChanged,
   signInAnonymously,
   signInWithPopup,
+  signOut,
   type Unsubscribe,
   type User,
 } from "firebase/auth";
@@ -27,9 +28,14 @@ export async function signInWithGoogle(): Promise<User> {
   return credential.user;
 }
 
+export async function signOutFromApp(): Promise<void> {
+  await signOut(auth);
+}
+
 export function currentUser(): User {
   if (!auth.currentUser) {
     throw new Error("Sign in first (anonymous or Google) before saving study data.");
   }
   return auth.currentUser;
 }
+
