@@ -54,6 +54,10 @@ export function friendlyError(error: unknown): string {
     return "Google sign-in was cancelled before it completed.";
   }
 
+  if (normalized.includes("auth/popup-blocked")) {
+    return "Google sign-in pop-up was blocked by your browser. Allow pop-ups for this site and try again.";
+  }
+
   if (normalized.includes("auth/unauthorized-domain")) {
     return "This domain is not authorized for sign-in. Add localhost (and your live domain) under Authentication → Settings → Authorized domains.";
   }

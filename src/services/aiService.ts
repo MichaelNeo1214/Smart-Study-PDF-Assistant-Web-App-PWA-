@@ -48,6 +48,28 @@ function requireAi() {
 const ON_DEVICE_TOKEN_LIMIT = 9216;
 const CHARS_PER_TOKEN = 4;
 
+// Maximum time to wait for a single AI inference call before surfacing a
+// clear error to the user instead of leaving them in a hanging loading state.
+const AI_REQUEST_TIMEOUT_MS = 60_000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  const controller = new AbortController();
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => {
+      controller.abort();
+      reject(
+        new Error(
+          `AI request timed out after ${Math.round(ms / 1000)} seconds. Please check your connection and try again.`,
+        )
+      );
+    }, ms);
+  });
+  return Promise.race([promise, timeoutPromise]).finally(() => {
+    if (timer) clearTimeout(timer);
+  });
+}
+
 const flashcardSchema = Schema.object({
   properties: {
     cards: Schema.array({
@@ -310,14 +332,17 @@ export async function generateFlashcards(
   const selection = await selectMode(text, routing);
   const model = flashcardModel(selection.mode);
 
-  const first = await model.generateContent(buildFlashcardPrompt(text));
+  const first = await withTimeout(model.generateContent(buildFlashcardPrompt(text)), AI_REQUEST_TIMEOUT_MS);
   const raw = first.response.text();
   const source = readInferenceSource(first.response);
 
   try {
     return { cards: parseFlashcards(raw), source, selection, raw };
   } catch {
-    const repair = await model.generateContent(buildFlashcardRepairPrompt(raw));
+    const repair = await withTimeout(
+      model.generateContent(buildFlashcardRepairPrompt(raw)),
+      AI_REQUEST_TIMEOUT_MS
+    );
     const repairedRaw = repair.response.text();
     return {
       cards: parseFlashcards(repairedRaw),
@@ -335,7 +360,10 @@ export async function generateExamGuide(
 ): Promise<ExamGuideGeneration> {
   const selection = await selectMode(text, routing);
   const model = textModel(selection.mode);
-  const result = await model.generateContent(buildExamGuidePrompt(text));
+  const result = await withTimeout(
+    model.generateContent(buildExamGuidePrompt(text)),
+    AI_REQUEST_TIMEOUT_MS
+  );
   const markdown = result.response.text();
 
   return {
@@ -355,7 +383,7 @@ export async function generateStudyInsight(
   const selection = await selectMode(text, routing);
   const model = textModel(selection.mode);
   const prompt = kind === "explain" ? buildExplainPrompt(text) : buildSummaryPrompt(text);
-  const result = await model.generateContent(prompt);
+  const result = await withTimeout(model.generateContent(prompt), AI_REQUEST_TIMEOUT_MS);
   const markdown = result.response.text();
 
   return {

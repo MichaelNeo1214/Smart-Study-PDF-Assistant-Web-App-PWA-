@@ -25,6 +25,21 @@ function millis(value: unknown): number | undefined {
   return undefined;
 }
 
+// Firestore document limit is 1 MiB. Keep a safety margin so metadata +
+// overhead never pushes a write over the boundary.
+const MAX_FIRESTORE_DOCUMENT_BYTES = 900_000;
+
+function assertDocumentSize(payload: unknown, label: string): void {
+  const size = new TextEncoder().encode(JSON.stringify(payload)).length;
+  if (size > MAX_FIRESTORE_DOCUMENT_BYTES) {
+    throw new Error(
+      `${label} exceeds Firestore document size limit (${Math.round(
+        size / 1024
+      )} KB). Please shorten the content or split it into smaller documents before saving.`
+    );
+  }
+}
+
 function deckRef(uid: string, deckId: string) {
   return doc(db, "users", uid, "decks", deckId);
 }
@@ -47,6 +62,8 @@ export async function saveDeck(deck: StudyDeck): Promise<void> {
     model: deck.model ?? null,
     updatedAt: serverTimestamp(),
   };
+
+  assertDocumentSize(payload, "Flashcard deck");
 
   if (existing.exists()) {
     await updateDoc(deckRef(user.uid, deck.id), payload);
@@ -129,6 +146,8 @@ export async function saveNote(note: StudyNote): Promise<void> {
     isSample: Boolean(note.isSample),
     updatedAt: serverTimestamp(),
   };
+
+  assertDocumentSize(payload, "Study note");
 
   if (existing.exists()) {
     await updateDoc(noteRef(user.uid, note.id), payload);
