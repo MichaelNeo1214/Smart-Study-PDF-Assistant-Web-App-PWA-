@@ -7,3 +7,6 @@ dist/
 .DS_Store
 .firebase/
 firebase-debug.log
+.agents
+.claude
+skilss-lock.json
